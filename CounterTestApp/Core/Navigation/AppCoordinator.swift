@@ -13,6 +13,7 @@ final class AppCoordinator: ObservableObject {
 
     private let analyticsService: AnalyticsServiceProtocol
     private let routeProvider: InitialRouteProviding
+    private let storageService: StorageService
     private var hasStarted = false
 
     lazy var splashViewModel = SplashViewModel(
@@ -22,12 +23,19 @@ final class AppCoordinator: ObservableObject {
         self?.show(destination)
     }
 
+    lazy var counterViewModel = CounterViewModel(
+        storage: storageService,
+        analyticsService: analyticsService
+    )
+
     init(
         analyticsService: AnalyticsServiceProtocol,
-        routeProvider: InitialRouteProviding
+        routeProvider: InitialRouteProviding,
+        storageService: StorageService
     ) {
         self.analyticsService = analyticsService
         self.routeProvider = routeProvider
+        self.storageService = storageService
     }
 
     func start() {
@@ -46,4 +54,3 @@ final class AppCoordinator: ObservableObject {
         }
     }
 }
-

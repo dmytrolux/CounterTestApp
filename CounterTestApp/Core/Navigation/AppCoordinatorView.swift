@@ -21,7 +21,7 @@ struct AppCoordinatorView: View {
         case .splash:
             SplashView(viewModel: coordinator.splashViewModel)
         case .counter:
-            DestinationPlaceholderView(title: "Counter Game")
+            CounterModuleView(viewModel: coordinator.counterViewModel)
         case .webView:
             DestinationPlaceholderView(title: "WebView")
         }

@@ -13,11 +13,13 @@ struct CounterTestAppApp: App {
 
     init() {
         let analyticsService = ConsoleAnalyticsService()
-        let routeProvider = MockRemoteConfigRoutingService(destination: .webView)
+        let routeProvider = MockRemoteConfigRoutingService(destination: .counter)
+        let storageService = UserDefaultsStorage()
         _coordinator = StateObject(
             wrappedValue: AppCoordinator(
                 analyticsService: analyticsService,
-                routeProvider: routeProvider
+                routeProvider: routeProvider,
+                storageService: storageService
             )
         )
     }
