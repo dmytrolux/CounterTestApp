@@ -1,0 +1,68 @@
+# ==========================================
+# Xcode & Build Artifacts
+# ==========================================
+build/
+DerivedData/
+*.pbxuser
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+*.xcuserstate
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+xcuserdata/
+
+# ==========================================
+# Swift Package Manager (SPM)
+# ==========================================
+.build/
+.swiftpm/
+
+# Package.resolved
+
+# ==========================================
+# CocoaPods
+# ==========================================
+Pods/
+
+# ==========================================
+# Carthage
+# ==========================================
+Carthage/Build/
+
+# ==========================================
+# Playgrounds
+# ==========================================
+timeline.xctimeline
+playground.xcworkspace
+
+# ==========================================
+# Fastlane & CI/CD
+# ==========================================
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots
+fastlane/test_output
+fastlane/readme.md
+*.p8
+
+# ==========================================
+# Secrets & Environment
+# ==========================================
+.env
+.env.*
+
+# ==========================================
+# macOS System Files
+# ==========================================
+.DS_Store
+*.DS_Store
+.AppleDouble
+.LSSharedFileList
+Icon
+._*
+.Spotlight-V100
+.Trashes
