@@ -4,16 +4,30 @@ import SwiftUI
 @MainActor
 final class AppCoordinator: ObservableObject {
     enum Route: Equatable {
-        case initial
+        case splash
+        case counter
+        case webView
     }
 
-    @Published private(set) var route: Route = .initial
+    @Published private(set) var route: Route = .splash
 
     private let analyticsService: AnalyticsServiceProtocol
+    private let routeProvider: InitialRouteProviding
     private var hasStarted = false
 
-    init(analyticsService: AnalyticsServiceProtocol) {
+    lazy var splashViewModel = SplashViewModel(
+        routeProvider: routeProvider,
+        analyticsService: analyticsService
+    ) { [weak self] destination in
+        self?.show(destination)
+    }
+
+    init(
+        analyticsService: AnalyticsServiceProtocol,
+        routeProvider: InitialRouteProviding
+    ) {
         self.analyticsService = analyticsService
+        self.routeProvider = routeProvider
     }
 
     func start() {
@@ -22,21 +36,14 @@ final class AppCoordinator: ObservableObject {
         hasStarted = true
         analyticsService.track(event: "app_started")
     }
-}
 
-struct AppCoordinatorView: View {
-    @ObservedObject var coordinator: AppCoordinator
-
-    var body: some View {
-        rootView
-            .onAppear(perform: coordinator.start)
-    }
-
-    @ViewBuilder
-    private var rootView: some View {
-        switch coordinator.route {
-        case .initial:
-            ContentView()
+    private func show(_ destination: LaunchDestination) {
+        switch destination {
+        case .counter:
+            route = .counter
+        case .webView:
+            route = .webView
         }
     }
 }
+
