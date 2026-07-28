@@ -12,14 +12,24 @@ struct CounterTestAppApp: App {
     @StateObject private var coordinator: AppCoordinator
 
     init() {
+        guard let webViewURL = URL(string: "https://lk.nsq.market/en/tools/testing") else {
+            preconditionFailure("The configured WebView URL must be valid.")
+        }
+
         let analyticsService = ConsoleAnalyticsService()
-        let routeProvider = MockRemoteConfigRoutingService(destination: .counter)
         let storageService = UserDefaultsStorage()
+        let routeProvider = MockRemoteConfigRoutingService(
+            storage: storageService,
+            firstDestination: .counter
+        )
+        let webViewConfigurationProvider = DefaultWebViewConfigurationProvider()
         _coordinator = StateObject(
             wrappedValue: AppCoordinator(
                 analyticsService: analyticsService,
                 routeProvider: routeProvider,
-                storageService: storageService
+                storageService: storageService,
+                webViewURL: webViewURL,
+                webViewConfigurationProvider: webViewConfigurationProvider
             )
         )
     }

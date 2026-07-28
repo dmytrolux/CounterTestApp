@@ -14,6 +14,8 @@ final class AppCoordinator: ObservableObject {
     private let analyticsService: AnalyticsServiceProtocol
     private let routeProvider: InitialRouteProviding
     private let storageService: StorageService
+    private let webViewURL: URL
+    private let webViewConfigurationProvider: WebViewConfigurationProviding
     private var hasStarted = false
 
     lazy var splashViewModel = SplashViewModel(
@@ -28,14 +30,24 @@ final class AppCoordinator: ObservableObject {
         analyticsService: analyticsService
     )
 
+    lazy var webViewViewModel = WebViewViewModel(
+        url: webViewURL,
+        configurationProvider: webViewConfigurationProvider,
+        analyticsService: analyticsService
+    )
+
     init(
         analyticsService: AnalyticsServiceProtocol,
         routeProvider: InitialRouteProviding,
-        storageService: StorageService
+        storageService: StorageService,
+        webViewURL: URL,
+        webViewConfigurationProvider: WebViewConfigurationProviding
     ) {
         self.analyticsService = analyticsService
         self.routeProvider = routeProvider
         self.storageService = storageService
+        self.webViewURL = webViewURL
+        self.webViewConfigurationProvider = webViewConfigurationProvider
     }
 
     func start() {

@@ -23,22 +23,7 @@ struct AppCoordinatorView: View {
         case .counter:
             CounterModuleView(viewModel: coordinator.counterViewModel)
         case .webView:
-            DestinationPlaceholderView(title: "WebView")
+            WebViewScreen(viewModel: coordinator.webViewViewModel)
         }
-    }
-}
-
-private struct DestinationPlaceholderView: View {
-    let title: String
-
-    var body: some View {
-        VStack(spacing: 12) {
-            Text(title)
-                .font(.title.bold())
-            Text("This flow will be implemented in the next development step.")
-                .multilineTextAlignment(.center)
-                .foregroundColor(.secondary)
-        }
-        .padding()
     }
 }
