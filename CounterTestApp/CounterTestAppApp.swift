@@ -9,9 +9,18 @@ import SwiftUI
 
 @main
 struct CounterTestAppApp: App {
+    @StateObject private var coordinator: AppCoordinator
+
+    init() {
+        let analyticsService = ConsoleAnalyticsService()
+        _coordinator = StateObject(
+            wrappedValue: AppCoordinator(analyticsService: analyticsService)
+        )
+    }
+
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            AppCoordinatorView(coordinator: coordinator)
         }
     }
 }
