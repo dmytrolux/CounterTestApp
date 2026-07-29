@@ -56,5 +56,25 @@ lifecycle analytics and keeps ordinary navigation inside the WebView. Explicit
 links to another HTTP(S) host open in the system browser. Custom schemes such
 as `tel:`, `mailto:` and `tg:` are passed to `UIApplication`.
 
-Downloads, camera permissions, popup creation, offline UI and navigation
-controls intentionally belong to the subsequent development steps.
+## Advanced WebView capabilities
+
+`WKUIDelegate` handles JavaScript-created windows. Internal popups are loaded
+in the existing WebView, while external popup URLs and custom schemes are
+forwarded to the system.
+
+Web camera and microphone requests are bridged to AVFoundation authorization
+and resolved through `WKPermissionDecision`. The app includes camera and
+microphone usage descriptions in its generated Info.plist.
+
+On iOS 18.4+, the WebKit open-panel delegate explicitly presents a
+`UIDocumentPickerViewController` for file inputs. Earlier supported iOS
+versions use WKWebView's native Safari-compatible document picker, because
+Apple does not expose the open-panel delegate there.
+
+`WKDownloadDelegate` detects attachment and unsupported MIME responses,
+downloads them to a unique temporary location, and presents a system export
+document picker when the download finishes. Temporary artifacts are removed
+after export or cancellation.
+
+Offline UI and navigation controls intentionally belong to the subsequent
+development steps.

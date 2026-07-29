@@ -26,6 +26,8 @@ struct CounterTestAppApp: App {
         )
         let webViewConfigurationProvider = DefaultWebViewConfigurationProvider()
         let externalURLOpener = SystemExternalURLOpener()
+        let documentPickerPresenter = SystemDocumentPickerPresenter()
+        let networkMonitor = NWPathNetworkMonitor()
         _coordinator = StateObject(
             wrappedValue: AppCoordinator(
                 analyticsService: analyticsService,
@@ -34,7 +36,9 @@ struct CounterTestAppApp: App {
                 storageService: storageService,
                 webViewURL: webViewURL,
                 webViewConfigurationProvider: webViewConfigurationProvider,
-                externalURLOpener: externalURLOpener
+                externalURLOpener: externalURLOpener,
+                documentPickerPresenter: documentPickerPresenter,
+                networkMonitor: networkMonitor
             )
         )
     }

@@ -17,6 +17,8 @@ final class AppCoordinator: ObservableObject {
     private let webViewURL: URL
     private let webViewConfigurationProvider: WebViewConfigurationProviding
     private let externalURLOpener: ExternalURLOpening
+    private let documentPickerPresenter: DocumentPickerPresenting
+    private let networkMonitor: NetworkMonitoring
     private var hasStarted = false
 
     lazy var splashViewModel = SplashViewModel(
@@ -36,6 +38,8 @@ final class AppCoordinator: ObservableObject {
         url: webViewURL,
         configurationProvider: webViewConfigurationProvider,
         externalURLOpener: externalURLOpener,
+        documentPickerPresenter: documentPickerPresenter,
+        networkMonitor: networkMonitor,
         analyticsService: analyticsService,
         onProgressUpdated: { [weak self] progress in
             self?.splashViewModel.updateWebViewProgress(progress)
@@ -52,7 +56,9 @@ final class AppCoordinator: ObservableObject {
         storageService: StorageService,
         webViewURL: URL,
         webViewConfigurationProvider: WebViewConfigurationProviding,
-        externalURLOpener: ExternalURLOpening
+        externalURLOpener: ExternalURLOpening,
+        documentPickerPresenter: DocumentPickerPresenting,
+        networkMonitor: NetworkMonitoring
     ) {
         self.analyticsService = analyticsService
         self.routeProvider = routeProvider
@@ -61,6 +67,8 @@ final class AppCoordinator: ObservableObject {
         self.webViewURL = webViewURL
         self.webViewConfigurationProvider = webViewConfigurationProvider
         self.externalURLOpener = externalURLOpener
+        self.documentPickerPresenter = documentPickerPresenter
+        self.networkMonitor = networkMonitor
     }
 
     func start() {
