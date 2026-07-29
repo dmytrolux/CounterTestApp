@@ -34,27 +34,37 @@ final class CounterViewModel: ObservableObject {
     }
 
     func increment() {
-            count += 1
-            chipBurstRevision += 1
-            guard count > bestScore else { return }
+        count += 1
+        chipBurstRevision += 1
+        analyticsService.track(
+            event: "counter_incremented",
+            parameters: ["count": String(count)]
+        )
+        guard count > bestScore else { return }
 
-            bestScore = count
-            recordRevision += 1
-            
-            storage.save(bestScore, forKey: StorageKey.bestScore)
-            analyticsService.track(
-                event: "counter_new_best_score",
-                parameters: ["score": String(bestScore)]
-            )
-        }
+        bestScore = count
+        recordRevision += 1
+        storage.save(bestScore, forKey: StorageKey.bestScore)
+        analyticsService.track(
+            event: "counter_new_best_score",
+            parameters: ["score": String(bestScore)]
+        )
+    }
 
     func decrement() {
         count = max(0, count - 1)
+        analyticsService.track(
+            event: "counter_decremented",
+            parameters: ["count": String(count)]
+        )
     }
 
     func reset() {
         count = 0
-        analyticsService.track(event: "counter_reset")
+        analyticsService.track(
+            event: "counter_reset",
+            parameters: ["best_score": String(bestScore)]
+        )
     }
 
 }

@@ -111,11 +111,13 @@ final class WebViewViewModel: ObservableObject {
 
     func goBack() {
         guard canGoBack else { return }
+        analyticsService.track(event: "web_view_back_tapped")
         goBackAction?()
     }
 
     func goForward() {
         guard canGoForward else { return }
+        analyticsService.track(event: "web_view_forward_tapped")
         goForwardAction?()
     }
 
@@ -124,6 +126,10 @@ final class WebViewViewModel: ObservableObject {
         isRetrying = true
         isLoading = true
         estimatedProgress = 0
+        analyticsService.track(
+            event: "web_view_retry_tapped",
+            parameters: ["url": request.url?.absoluteString ?? "unknown"]
+        )
         retryAction?()
     }
 
@@ -135,6 +141,10 @@ final class WebViewViewModel: ObservableObject {
         )
         request = newRequest
         loadError = nil
+        analyticsService.track(
+            event: "web_view_deep_link_requested",
+            parameters: ["url": url.absoluteString]
+        )
         navigateAction?(newRequest)
     }
 
@@ -319,6 +329,16 @@ final class WebViewViewModel: ObservableObject {
         analyticsService.track(
             event: "web_view_download_failed",
             parameters: ["error": String(describing: error)]
+        )
+    }
+
+    func trackFileImport(filesCount: Int?, cancelled: Bool) {
+        analyticsService.track(
+            event: "web_view_file_import_resolved",
+            parameters: [
+                "cancelled": String(cancelled),
+                "files_count": String(filesCount ?? 0)
+            ]
         )
     }
 }

@@ -28,6 +28,7 @@ struct WebViewContainer: UIViewRepresentable {
         webView.navigationDelegate = context.coordinator
         webView.uiDelegate = context.coordinator
         context.coordinator.observe(of: webView)
+        context.coordinator.disableDragInteractions(in: webView)
         context.coordinator.lastRequestedURL = viewModel.request.url
         webView.load(viewModel.request)
         return webView
@@ -229,6 +230,7 @@ struct WebViewContainer: UIViewRepresentable {
         }
 
         func webView(_ webView: WKWebView, didFinish navigation: WKNavigation?) {
+            disableDragInteractions(in: webView)
             publishNavigationState(from: webView)
             viewModel.navigationDidFinish(url: webView.url)
         }
@@ -384,7 +386,13 @@ struct WebViewContainer: UIViewRepresentable {
         ) {
             viewModel.documentPickerPresenter.presentFileImporter(
                 allowsMultipleSelection: parameters.allowsMultipleSelection,
-                completion: completionHandler
+                completion: { [weak viewModel] urls in
+                    viewModel?.trackFileImport(
+                        filesCount: urls?.count,
+                        cancelled: urls == nil
+                    )
+                    completionHandler(urls)
+                }
             )
         }
 
@@ -550,6 +558,21 @@ struct WebViewContainer: UIViewRepresentable {
                 .replacingOccurrences(of: "/", with: "_")
                 .replacingOccurrences(of: ":", with: "_")
             return sanitized.isEmpty ? "download" : sanitized
+        }
+
+        func disableDragInteractions(in webView: WKWebView) {
+            disableDragInteractions(in: webView.scrollView)
+            DispatchQueue.main.async { [weak self, weak webView] in
+                guard let self, let webView else { return }
+                disableDragInteractions(in: webView.scrollView)
+            }
+        }
+
+        private func disableDragInteractions(in view: UIView) {
+            view.interactions
+                .compactMap { $0 as? UIDragInteraction }
+                .forEach { $0.isEnabled = false }
+            view.subviews.forEach(disableDragInteractions(in:))
         }
     }
 }

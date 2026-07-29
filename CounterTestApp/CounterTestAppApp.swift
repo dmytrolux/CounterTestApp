@@ -45,7 +45,10 @@ struct CounterTestAppApp: App {
             : NWPathNetworkMonitor()
         let notificationService: NotificationServiceProtocol = isUITesting
             ? NoopNotificationService()
-            : NotificationService(destinationURL: notificationURL)
+            : NotificationService(
+                destinationURL: notificationURL,
+                analyticsService: analyticsService
+            )
         _coordinator = StateObject(
             wrappedValue: AppCoordinator(
                 analyticsService: analyticsService,

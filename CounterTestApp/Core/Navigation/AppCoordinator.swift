@@ -87,6 +87,10 @@ final class AppCoordinator: ObservableObject {
     }
 
     func handleScenePhase(_ scenePhase: ScenePhase) {
+        analyticsService.track(
+            event: "app_scene_phase_changed",
+            parameters: ["phase": scenePhase.analyticsName]
+        )
         switch scenePhase {
         case .active:
             isBackgroundNotificationScheduled = false
@@ -94,6 +98,10 @@ final class AppCoordinator: ObservableObject {
         case .inactive, .background:
             guard !isBackgroundNotificationScheduled else { return }
             isBackgroundNotificationScheduled = true
+            analyticsService.track(
+                event: "background_notification_requested",
+                parameters: ["delay_seconds": "10"]
+            )
             notificationService.scheduleBackgroundNotification(after: 10)
         @unknown default:
             break
@@ -101,6 +109,10 @@ final class AppCoordinator: ObservableObject {
     }
 
     private func show(_ destination: LaunchDestination) {
+        analyticsService.track(
+            event: "route_presented",
+            parameters: ["destination": destination.rawValue]
+        )
         switch destination {
         case .counter:
             route = .counter
@@ -119,5 +131,16 @@ final class AppCoordinator: ObservableObject {
         let viewModel = webViewViewModel
         viewModel.navigate(to: url)
         route = .webView
+    }
+}
+
+private extension ScenePhase {
+    var analyticsName: String {
+        switch self {
+        case .active: return "active"
+        case .inactive: return "inactive"
+        case .background: return "background"
+        @unknown default: return "unknown"
+        }
     }
 }

@@ -26,6 +26,7 @@ final class NotificationService: NSObject, NotificationServiceProtocol {
 
     private let notificationCenter: UNUserNotificationCenter
     private let destinationURL: URL
+    private let analyticsService: AnalyticsServiceProtocol
     private let logger = Logger(
         subsystem: Bundle.main.bundleIdentifier ?? "CounterTestApp",
         category: "LocalNotifications"
@@ -34,10 +35,12 @@ final class NotificationService: NSObject, NotificationServiceProtocol {
 
     init(
         notificationCenter: UNUserNotificationCenter = .current(),
-        destinationURL: URL
+        destinationURL: URL,
+        analyticsService: AnalyticsServiceProtocol
     ) {
         self.notificationCenter = notificationCenter
         self.destinationURL = destinationURL
+        self.analyticsService = analyticsService
         super.init()
         notificationCenter.delegate = self
     }
@@ -47,13 +50,24 @@ final class NotificationService: NSObject, NotificationServiceProtocol {
     }
 
     func requestAuthorization() {
+        analyticsService.track(event: "notification_permission_requested")
         notificationCenter.requestAuthorization(options: [.alert, .badge, .sound]) {
             [weak self] granted, error in
-            guard let self else { return }
-            if let error {
-                logger.error("Notification permission failed: \(error.localizedDescription, privacy: .public)")
-            } else {
-                logger.info("Notification permission granted: \(granted, privacy: .public)")
+            Task { @MainActor [weak self] in
+                guard let self else { return }
+                if let error {
+                    logger.error("Notification permission failed: \(error.localizedDescription, privacy: .public)")
+                    analyticsService.track(
+                        event: "notification_permission_failed",
+                        parameters: ["error": error.localizedDescription]
+                    )
+                } else {
+                    logger.info("Notification permission granted: \(granted, privacy: .public)")
+                    analyticsService.track(
+                        event: "notification_permission_resolved",
+                        parameters: ["granted": String(granted)]
+                    )
+                }
             }
         }
     }
@@ -83,11 +97,21 @@ final class NotificationService: NSObject, NotificationServiceProtocol {
         // Avoid remove+add here: those asynchronous operations can race while
         // the scene quickly transitions from inactive to background.
         notificationCenter.add(request) { [weak self] error in
-            guard let self else { return }
-            if let error {
-                logger.error("Notification scheduling failed: \(error.localizedDescription, privacy: .public)")
-            } else {
-                logger.info("Background notification scheduled in \(delay, privacy: .public) seconds")
+            Task { @MainActor [weak self] in
+                guard let self else { return }
+                if let error {
+                    logger.error("Notification scheduling failed: \(error.localizedDescription, privacy: .public)")
+                    analyticsService.track(
+                        event: "background_notification_schedule_failed",
+                        parameters: ["error": error.localizedDescription]
+                    )
+                } else {
+                    logger.info("Background notification scheduled in \(delay, privacy: .public) seconds")
+                    analyticsService.track(
+                        event: "background_notification_scheduled",
+                        parameters: ["delay_seconds": String(delay)]
+                    )
+                }
             }
         }
     }
@@ -96,6 +120,7 @@ final class NotificationService: NSObject, NotificationServiceProtocol {
         notificationCenter.removePendingNotificationRequests(
             withIdentifiers: [Constants.requestIdentifier]
         )
+        analyticsService.track(event: "background_notification_cancelled")
     }
 }
 
@@ -122,6 +147,10 @@ extension NotificationService: UNUserNotificationCenterDelegate {
             guard let self,
                   let urlString,
                   let url = URL(string: urlString) else { return }
+            analyticsService.track(
+                event: "notification_response_received",
+                parameters: ["url": url.absoluteString]
+            )
             onNotificationOpened?(url)
         }
     }
