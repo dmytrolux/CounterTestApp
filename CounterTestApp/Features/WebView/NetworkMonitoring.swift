@@ -7,6 +7,15 @@ protocol NetworkMonitoring: AnyObject {
 }
 
 @MainActor
+final class AlwaysConnectedNetworkMonitor: NetworkMonitoring {
+    func start(statusDidChange: @escaping (Bool) -> Void) {
+        statusDidChange(true)
+    }
+
+    func stop() {}
+}
+
+@MainActor
 final class NWPathNetworkMonitor: NetworkMonitoring {
     private let monitor = NWPathMonitor()
     private let queue = DispatchQueue(label: "com.countertestapp.network-monitor")

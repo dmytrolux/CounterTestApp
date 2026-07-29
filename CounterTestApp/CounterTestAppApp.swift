@@ -12,7 +12,16 @@ struct CounterTestAppApp: App {
     @StateObject private var coordinator: AppCoordinator
 
     init() {
-        guard let webViewURL = URL(string: "https://lk.nsq.market/en/tools/testing") else {
+        let arguments = ProcessInfo.processInfo.arguments
+        let isUITesting = arguments.contains("--ui-testing")
+        let forcedDestination: LaunchDestination? = arguments.contains("--force-counter")
+            ? .counter
+            : arguments.contains("--force-webview") ? .webView : nil
+        let webURLString = isUITesting && forcedDestination == .webView
+            ? "data:text/html,<html><body>UI%20Test</body></html>"
+            : "https://lk.nsq.market/en/tools/testing"
+
+        guard let webViewURL = URL(string: webURLString) else {
             preconditionFailure("The configured WebView URL must be valid.")
         }
         guard let notificationURL = URL(string: "https://www.apple.com/") else {
@@ -22,16 +31,21 @@ struct CounterTestAppApp: App {
         let analyticsService = ConsoleAnalyticsService()
         let storageService = UserDefaultsStorage()
         let routingDelayNanoseconds = MockRemoteConfigRoutingService.defaultLoadingDelayNanoseconds
-        let routeProvider = MockRemoteConfigRoutingService(
-            storage: storageService,
-            firstDestination: .counter,
-            loadingDelayNanoseconds: routingDelayNanoseconds
-        )
+        let routeProvider: InitialRouteProviding = forcedDestination.map(StaticInitialRouteProvider.init)
+            ?? MockRemoteConfigRoutingService(
+                storage: storageService,
+                firstDestination: .counter,
+                loadingDelayNanoseconds: routingDelayNanoseconds
+            )
         let webViewConfigurationProvider = DefaultWebViewConfigurationProvider()
         let externalURLOpener = SystemExternalURLOpener()
         let documentPickerPresenter = SystemDocumentPickerPresenter()
-        let networkMonitor = NWPathNetworkMonitor()
-        let notificationService = NotificationService(destinationURL: notificationURL)
+        let networkMonitor: NetworkMonitoring = isUITesting
+            ? AlwaysConnectedNetworkMonitor()
+            : NWPathNetworkMonitor()
+        let notificationService: NotificationServiceProtocol = isUITesting
+            ? NoopNotificationService()
+            : NotificationService(destinationURL: notificationURL)
         _coordinator = StateObject(
             wrappedValue: AppCoordinator(
                 analyticsService: analyticsService,

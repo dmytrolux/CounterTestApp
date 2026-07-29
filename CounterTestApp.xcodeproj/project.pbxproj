@@ -12,12 +12,24 @@
 
 /* Begin PBXFileReference section */
 		660027283018F9570088E15B /* CounterTestApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CounterTestApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A10000000000000000000001 /* CounterTestAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CounterTestAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A10000000000000000000002 /* CounterTestAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CounterTestAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		6600272A3018F9570088E15B /* CounterTestApp */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = CounterTestApp;
+			sourceTree = "<group>";
+		};
+		A10000000000000000000003 /* CounterTestAppTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = CounterTestAppTests;
+			sourceTree = "<group>";
+		};
+		A10000000000000000000004 /* CounterTestAppUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = CounterTestAppUITests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -31,6 +43,20 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A10000000000000000000006 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A10000000000000000000009 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -38,6 +64,8 @@
 			isa = PBXGroup;
 			children = (
 				6600272A3018F9570088E15B /* CounterTestApp */,
+				A10000000000000000000003 /* CounterTestAppTests */,
+				A10000000000000000000004 /* CounterTestAppUITests */,
 				660027293018F9570088E15B /* Products */,
 			);
 			sourceTree = "<group>";
@@ -46,11 +74,30 @@
 			isa = PBXGroup;
 			children = (
 				660027283018F9570088E15B /* CounterTestApp.app */,
+				A10000000000000000000001 /* CounterTestAppTests.xctest */,
+				A10000000000000000000002 /* CounterTestAppUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
+
+/* Begin PBXContainerItemProxy section */
+		A1000000000000000000000D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 660027203018F9570088E15B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 660027273018F9570088E15B;
+			remoteInfo = CounterTestApp;
+		};
+		A1000000000000000000000F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 660027203018F9570088E15B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 660027273018F9570088E15B;
+			remoteInfo = CounterTestApp;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXNativeTarget section */
 		660027273018F9570088E15B /* CounterTestApp */ = {
@@ -76,6 +123,52 @@
 			productReference = 660027283018F9570088E15B /* CounterTestApp.app */;
 			productType = "com.apple.product-type.application";
 		};
+		A1000000000000000000000B /* CounterTestAppTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A10000000000000000000015 /* Build configuration list for PBXNativeTarget "CounterTestAppTests" */;
+			buildPhases = (
+				A10000000000000000000005 /* Sources */,
+				A10000000000000000000006 /* Frameworks */,
+				A10000000000000000000007 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A1000000000000000000000E /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				A10000000000000000000003 /* CounterTestAppTests */,
+			);
+			name = CounterTestAppTests;
+			packageProductDependencies = (
+			);
+			productName = CounterTestAppTests;
+			productReference = A10000000000000000000001 /* CounterTestAppTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		A1000000000000000000000C /* CounterTestAppUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A10000000000000000000016 /* Build configuration list for PBXNativeTarget "CounterTestAppUITests" */;
+			buildPhases = (
+				A10000000000000000000008 /* Sources */,
+				A10000000000000000000009 /* Frameworks */,
+				A1000000000000000000000A /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A10000000000000000000010 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				A10000000000000000000004 /* CounterTestAppUITests */,
+			);
+			name = CounterTestAppUITests;
+			packageProductDependencies = (
+			);
+			productName = CounterTestAppUITests;
+			productReference = A10000000000000000000002 /* CounterTestAppUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -88,6 +181,14 @@
 				TargetAttributes = {
 					660027273018F9570088E15B = {
 						CreatedOnToolsVersion = 26.6;
+					};
+					A1000000000000000000000B = {
+						CreatedOnToolsVersion = 26.6;
+						TestTargetID = 660027273018F9570088E15B;
+					};
+					A1000000000000000000000C = {
+						CreatedOnToolsVersion = 26.6;
+						TestTargetID = 660027273018F9570088E15B;
 					};
 				};
 			};
@@ -109,12 +210,28 @@
 			projectRoot = "";
 			targets = (
 				660027273018F9570088E15B /* CounterTestApp */,
+				A1000000000000000000000B /* CounterTestAppTests */,
+				A1000000000000000000000C /* CounterTestAppUITests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		660027263018F9570088E15B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A10000000000000000000007 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A1000000000000000000000A /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -131,7 +248,34 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A10000000000000000000005 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A10000000000000000000008 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		A1000000000000000000000E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 660027273018F9570088E15B /* CounterTestApp */;
+			targetProxy = A1000000000000000000000D /* PBXContainerItemProxy */;
+		};
+		A10000000000000000000010 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 660027273018F9570088E15B /* CounterTestApp */;
+			targetProxy = A1000000000000000000000F /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		660027313018F9590088E15B /* Debug */ = {
@@ -335,6 +479,74 @@
 			};
 			name = Release;
 		};
+		A10000000000000000000011 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
+				PRODUCT_BUNDLE_IDENTIFIER = com.salokpi.CounterTestAppTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CounterTestApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/CounterTestApp";
+			};
+			name = Debug;
+		};
+		A10000000000000000000012 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
+				PRODUCT_BUNDLE_IDENTIFIER = com.salokpi.CounterTestAppTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CounterTestApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/CounterTestApp";
+			};
+			name = Release;
+		};
+		A10000000000000000000013 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
+				PRODUCT_BUNDLE_IDENTIFIER = com.salokpi.CounterTestAppUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_TARGET_NAME = CounterTestApp;
+			};
+			name = Debug;
+		};
+		A10000000000000000000014 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
+				PRODUCT_BUNDLE_IDENTIFIER = com.salokpi.CounterTestAppUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_TARGET_NAME = CounterTestApp;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -352,6 +564,24 @@
 			buildConfigurations = (
 				660027343018F9590088E15B /* Debug */,
 				660027353018F9590088E15B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A10000000000000000000015 /* Build configuration list for PBXNativeTarget "CounterTestAppTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A10000000000000000000011 /* Debug */,
+				A10000000000000000000012 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A10000000000000000000016 /* Build configuration list for PBXNativeTarget "CounterTestAppUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A10000000000000000000013 /* Debug */,
+				A10000000000000000000014 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

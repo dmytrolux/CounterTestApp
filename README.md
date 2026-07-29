@@ -76,5 +76,24 @@ downloads them to a unique temporary location, and presents a system export
 document picker when the download finishes. Temporary artifacts are removed
 after export or cancellation.
 
-Offline UI and navigation controls intentionally belong to the subsequent
-development steps.
+## Tests
+
+The project contains a deliberately small critical test suite:
+
+- Unit tests verify alternating launch routing, Counter best-score persistence,
+  the lower bound of zero, and the WebView error/retry path.
+- UI smoke tests verify that the Counter can be started and incremented, and
+  that the WebView navigation controls are present.
+
+UI tests use `--ui-testing` together with `--force-counter` or
+`--force-webview`. The WebView test loads local data and replaces notifications
+and network monitoring with deterministic test implementations, so it does not
+depend on internet access or system permission dialogs.
+
+Run the suite with Product > Test in Xcode, or with:
+
+```sh
+xcodebuild test -project CounterTestApp.xcodeproj \
+  -scheme CounterTestApp \
+  -destination 'platform=iOS Simulator,name=iPhone 17 Pro'
+```

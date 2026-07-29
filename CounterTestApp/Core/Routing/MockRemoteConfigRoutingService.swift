@@ -29,15 +29,14 @@ struct MockRemoteConfigRoutingService: InitialRouteProviding {
         let lastDestination = lastDestinationRawValue.flatMap(LaunchDestination.init(rawValue:))
         let destination: LaunchDestination
 
-//        switch lastDestination {
-//        case .counter:
-//            destination = .webView
-//        case .webView:
-//            destination = .counter
-//        case nil:
-//            destination = firstDestination
-//        }
-        destination = .webView
+        switch lastDestination {
+        case .counter:
+            destination = .webView
+        case .webView:
+            destination = .counter
+        case nil:
+            destination = firstDestination
+        }
 
         storage.save(destination.rawValue, forKey: StorageKey.lastDestination)
         return destination

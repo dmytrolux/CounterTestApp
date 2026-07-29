@@ -10,6 +10,14 @@ protocol NotificationServiceProtocol: AnyObject {
 }
 
 @MainActor
+final class NoopNotificationService: NotificationServiceProtocol {
+    func configure(onNotificationOpened: @escaping (URL) -> Void) {}
+    func requestAuthorization() {}
+    func scheduleBackgroundNotification(after delay: TimeInterval) {}
+    func cancelPendingBackgroundNotification() {}
+}
+
+@MainActor
 final class NotificationService: NSObject, NotificationServiceProtocol {
     private enum Constants {
         static let requestIdentifier = "background-reminder"
