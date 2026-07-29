@@ -21,6 +21,7 @@ final class SplashViewModel: ObservableObject {
     private var resolvedDestination: LaunchDestination?
     private var routingProgressTask: Task<Void, Never>?
     private var webViewDismissalTask: Task<Void, Never>?
+    private var isExternallyDismissed = false
 
     init(
         routeProvider: InitialRouteProviding,
@@ -35,7 +36,7 @@ final class SplashViewModel: ObservableObject {
     }
 
     func load() async {
-        guard !isResolving else { return }
+        guard !isResolving, !isExternallyDismissed else { return }
 
         isResolving = true
         defer { isResolving = false }
@@ -49,7 +50,7 @@ final class SplashViewModel: ObservableObject {
 
         do {
             let destination = try await routeProvider.fetchInitialDestination()
-            guard !Task.isCancelled else { return }
+            guard !Task.isCancelled, !isExternallyDismissed else { return }
             routingProgressTask?.cancel()
             resolvedDestination = destination
 
@@ -96,6 +97,13 @@ final class SplashViewModel: ObservableObject {
             guard !Task.isCancelled else { return }
             self?.isVisible = false
         }
+    }
+
+    func dismiss() {
+        isExternallyDismissed = true
+        routingProgressTask?.cancel()
+        webViewDismissalTask?.cancel()
+        isVisible = false
     }
 
     private func startRoutingProgress() {

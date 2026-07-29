@@ -1,5 +1,6 @@
 import Combine
 import Foundation
+import WebKit
 
 struct WebViewLoadError: Equatable {
     enum Kind: Equatable {
@@ -15,6 +16,10 @@ struct WebViewLoadError: Equatable {
 
 @MainActor
 final class WebViewViewModel: ObservableObject {
+    private enum WebKitErrorCode {
+        static let frameLoadInterruptedByPolicyChange = 102
+    }
+
     @Published private(set) var estimatedProgress = 0.0
     @Published private(set) var canGoBack = false
     @Published private(set) var canGoForward = false
@@ -23,7 +28,7 @@ final class WebViewViewModel: ObservableObject {
     @Published private(set) var isLoading = false
     @Published private(set) var isOffline = false
 
-    let request: URLRequest
+    private(set) var request: URLRequest
     let configurationProvider: WebViewConfigurationProviding
     let externalURLOpener: ExternalURLOpening
     let documentPickerPresenter: DocumentPickerPresenting
@@ -36,6 +41,7 @@ final class WebViewViewModel: ObservableObject {
     private var goBackAction: (() -> Void)?
     private var goForwardAction: (() -> Void)?
     private var retryAction: (() -> Void)?
+    private var navigateAction: ((URLRequest) -> Void)?
 
     init(
         url: URL,
@@ -78,11 +84,13 @@ final class WebViewViewModel: ObservableObject {
     func bindNavigation(
         goBack: @escaping () -> Void,
         goForward: @escaping () -> Void,
-        retry: @escaping () -> Void
+        retry: @escaping () -> Void,
+        navigate: @escaping (URLRequest) -> Void
     ) {
         goBackAction = goBack
         goForwardAction = goForward
         retryAction = retry
+        navigateAction = navigate
     }
 
     func updateNavigationState(canGoBack: Bool, canGoForward: Bool) {
@@ -98,8 +106,7 @@ final class WebViewViewModel: ObservableObject {
         goBackAction = nil
         goForwardAction = nil
         retryAction = nil
-        canGoBack = false
-        canGoForward = false
+        navigateAction = nil
     }
 
     func goBack() {
@@ -118,6 +125,17 @@ final class WebViewViewModel: ObservableObject {
         isLoading = true
         estimatedProgress = 0
         retryAction?()
+    }
+
+    func navigate(to url: URL) {
+        let newRequest = URLRequest(
+            url: url,
+            cachePolicy: .useProtocolCachePolicy,
+            timeoutInterval: 30
+        )
+        request = newRequest
+        loadError = nil
+        navigateAction?(newRequest)
     }
 
     func navigationDidStart(url: URL?) {
@@ -154,7 +172,14 @@ final class WebViewViewModel: ObservableObject {
 
     func navigationDidFail(url: URL?, error: Error) {
         let nsError = error as NSError
-        guard !(nsError.domain == NSURLErrorDomain && nsError.code == NSURLErrorCancelled) else {
+        guard !isExpectedNavigationCancellation(nsError) else {
+            analyticsService.track(
+                event: "web_view_navigation_cancelled",
+                parameters: [
+                    "url": url?.absoluteString ?? "unknown",
+                    "code": String(nsError.code)
+                ]
+            )
             return
         }
 
@@ -186,6 +211,16 @@ final class WebViewViewModel: ObservableObject {
                 systemImage: isOffline ? "wifi.slash" : "exclamationmark.triangle"
             )
         )
+    }
+
+    private func isExpectedNavigationCancellation(_ error: NSError) -> Bool {
+        if error.domain == NSURLErrorDomain,
+           error.code == NSURLErrorCancelled {
+            return true
+        }
+
+        return error.domain == WKError.errorDomain
+            && error.code == WebKitErrorCode.frameLoadInterruptedByPolicyChange
     }
 
     func navigationDidReceiveHTTPError(statusCode: Int) {

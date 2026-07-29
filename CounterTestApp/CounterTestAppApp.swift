@@ -15,6 +15,9 @@ struct CounterTestAppApp: App {
         guard let webViewURL = URL(string: "https://lk.nsq.market/en/tools/testing") else {
             preconditionFailure("The configured WebView URL must be valid.")
         }
+        guard let notificationURL = URL(string: "https://www.apple.com/") else {
+            preconditionFailure("The notification URL must be valid.")
+        }
 
         let analyticsService = ConsoleAnalyticsService()
         let storageService = UserDefaultsStorage()
@@ -28,6 +31,7 @@ struct CounterTestAppApp: App {
         let externalURLOpener = SystemExternalURLOpener()
         let documentPickerPresenter = SystemDocumentPickerPresenter()
         let networkMonitor = NWPathNetworkMonitor()
+        let notificationService = NotificationService(destinationURL: notificationURL)
         _coordinator = StateObject(
             wrappedValue: AppCoordinator(
                 analyticsService: analyticsService,
@@ -38,7 +42,8 @@ struct CounterTestAppApp: App {
                 webViewConfigurationProvider: webViewConfigurationProvider,
                 externalURLOpener: externalURLOpener,
                 documentPickerPresenter: documentPickerPresenter,
-                networkMonitor: networkMonitor
+                networkMonitor: networkMonitor,
+                notificationService: notificationService
             )
         )
     }

@@ -9,6 +9,7 @@ import SwiftUI
 
 struct AppCoordinatorView: View {
     @ObservedObject var coordinator: AppCoordinator
+    @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
         ZStack {
@@ -18,6 +19,7 @@ struct AppCoordinatorView: View {
         }
         .preferredColorScheme(.dark)
         .onAppear(perform: coordinator.start)
+        .onChange(of: scenePhase, perform: coordinator.handleScenePhase)
     }
 
     @ViewBuilder

@@ -77,6 +77,11 @@ struct WebViewContainer: UIViewRepresentable {
                 retry: { [weak self, weak webView] in
                     guard let self, let webView else { return }
                     webView.load(self.lastMainFrameRequest ?? self.viewModel.request)
+                },
+                navigate: { [weak self, weak webView] request in
+                    self?.lastMainFrameRequest = request
+                    self?.lastRequestedURL = request.url
+                    webView?.load(request)
                 }
             )
 

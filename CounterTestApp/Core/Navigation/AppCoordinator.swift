@@ -19,7 +19,9 @@ final class AppCoordinator: ObservableObject {
     private let externalURLOpener: ExternalURLOpening
     private let documentPickerPresenter: DocumentPickerPresenting
     private let networkMonitor: NetworkMonitoring
+    private let notificationService: NotificationServiceProtocol
     private var hasStarted = false
+    private var isBackgroundNotificationScheduled = false
 
     lazy var splashViewModel = SplashViewModel(
         routeProvider: routeProvider,
@@ -58,7 +60,8 @@ final class AppCoordinator: ObservableObject {
         webViewConfigurationProvider: WebViewConfigurationProviding,
         externalURLOpener: ExternalURLOpening,
         documentPickerPresenter: DocumentPickerPresenting,
-        networkMonitor: NetworkMonitoring
+        networkMonitor: NetworkMonitoring,
+        notificationService: NotificationServiceProtocol
     ) {
         self.analyticsService = analyticsService
         self.routeProvider = routeProvider
@@ -69,6 +72,10 @@ final class AppCoordinator: ObservableObject {
         self.externalURLOpener = externalURLOpener
         self.documentPickerPresenter = documentPickerPresenter
         self.networkMonitor = networkMonitor
+        self.notificationService = notificationService
+        notificationService.configure { [weak self] url in
+            self?.openNotificationDestination(url)
+        }
     }
 
     func start() {
@@ -76,6 +83,21 @@ final class AppCoordinator: ObservableObject {
 
         hasStarted = true
         analyticsService.track(event: "app_started")
+        notificationService.requestAuthorization()
+    }
+
+    func handleScenePhase(_ scenePhase: ScenePhase) {
+        switch scenePhase {
+        case .active:
+            isBackgroundNotificationScheduled = false
+            notificationService.cancelPendingBackgroundNotification()
+        case .inactive, .background:
+            guard !isBackgroundNotificationScheduled else { return }
+            isBackgroundNotificationScheduled = true
+            notificationService.scheduleBackgroundNotification(after: 10)
+        @unknown default:
+            break
+        }
     }
 
     private func show(_ destination: LaunchDestination) {
@@ -83,7 +105,19 @@ final class AppCoordinator: ObservableObject {
         case .counter:
             route = .counter
         case .webView:
+            _ = webViewViewModel
             route = .webView
         }
+    }
+
+    private func openNotificationDestination(_ url: URL) {
+        analyticsService.track(
+            event: "notification_opened",
+            parameters: ["url": url.absoluteString]
+        )
+        splashViewModel.dismiss()
+        let viewModel = webViewViewModel
+        viewModel.navigate(to: url)
+        route = .webView
     }
 }
