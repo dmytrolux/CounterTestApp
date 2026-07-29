@@ -1,6 +1,8 @@
 import Foundation
 
 struct MockRemoteConfigRoutingService: InitialRouteProviding {
+    static let defaultLoadingDelayNanoseconds: UInt64 = 1_000_000_000
+
     private enum StorageKey {
         static let lastDestination = "routing.lastDestination"
     }
@@ -12,7 +14,7 @@ struct MockRemoteConfigRoutingService: InitialRouteProviding {
     init(
         storage: StorageService,
         firstDestination: LaunchDestination = .counter,
-        loadingDelayNanoseconds: UInt64 = 1_500_000_000
+        loadingDelayNanoseconds: UInt64 = Self.defaultLoadingDelayNanoseconds
     ) {
         self.storage = storage
         self.firstDestination = firstDestination
@@ -27,14 +29,15 @@ struct MockRemoteConfigRoutingService: InitialRouteProviding {
         let lastDestination = lastDestinationRawValue.flatMap(LaunchDestination.init(rawValue:))
         let destination: LaunchDestination
 
-        switch lastDestination {
-        case .counter:
-            destination = .webView
-        case .webView:
-            destination = .counter
-        case nil:
-            destination = firstDestination
-        }
+//        switch lastDestination {
+//        case .counter:
+//            destination = .webView
+//        case .webView:
+//            destination = .counter
+//        case nil:
+//            destination = firstDestination
+//        }
+        destination = .webView
 
         storage.save(destination.rawValue, forKey: StorageKey.lastDestination)
         return destination

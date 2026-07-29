@@ -4,22 +4,24 @@ import SwiftUI
 @MainActor
 final class AppCoordinator: ObservableObject {
     enum Route: Equatable {
-        case splash
         case counter
         case webView
     }
 
-    @Published private(set) var route: Route = .splash
+    @Published private(set) var route: Route = .counter
 
     private let analyticsService: AnalyticsServiceProtocol
     private let routeProvider: InitialRouteProviding
+    private let routingDelayNanoseconds: UInt64
     private let storageService: StorageService
     private let webViewURL: URL
     private let webViewConfigurationProvider: WebViewConfigurationProviding
+    private let externalURLOpener: ExternalURLOpening
     private var hasStarted = false
 
     lazy var splashViewModel = SplashViewModel(
         routeProvider: routeProvider,
+        routingDelayNanoseconds: routingDelayNanoseconds,
         analyticsService: analyticsService
     ) { [weak self] destination in
         self?.show(destination)
@@ -33,21 +35,32 @@ final class AppCoordinator: ObservableObject {
     lazy var webViewViewModel = WebViewViewModel(
         url: webViewURL,
         configurationProvider: webViewConfigurationProvider,
-        analyticsService: analyticsService
+        externalURLOpener: externalURLOpener,
+        analyticsService: analyticsService,
+        onProgressUpdated: { [weak self] progress in
+            self?.splashViewModel.updateWebViewProgress(progress)
+        },
+        onInitialLoadFinished: { [weak self] in
+            self?.splashViewModel.webViewDidFinishInitialLoad()
+        }
     )
 
     init(
         analyticsService: AnalyticsServiceProtocol,
         routeProvider: InitialRouteProviding,
+        routingDelayNanoseconds: UInt64,
         storageService: StorageService,
         webViewURL: URL,
-        webViewConfigurationProvider: WebViewConfigurationProviding
+        webViewConfigurationProvider: WebViewConfigurationProviding,
+        externalURLOpener: ExternalURLOpening
     ) {
         self.analyticsService = analyticsService
         self.routeProvider = routeProvider
+        self.routingDelayNanoseconds = routingDelayNanoseconds
         self.storageService = storageService
         self.webViewURL = webViewURL
         self.webViewConfigurationProvider = webViewConfigurationProvider
+        self.externalURLOpener = externalURLOpener
     }
 
     func start() {

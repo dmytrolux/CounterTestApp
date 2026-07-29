@@ -18,18 +18,23 @@ struct CounterTestAppApp: App {
 
         let analyticsService = ConsoleAnalyticsService()
         let storageService = UserDefaultsStorage()
+        let routingDelayNanoseconds = MockRemoteConfigRoutingService.defaultLoadingDelayNanoseconds
         let routeProvider = MockRemoteConfigRoutingService(
             storage: storageService,
-            firstDestination: .counter
+            firstDestination: .counter,
+            loadingDelayNanoseconds: routingDelayNanoseconds
         )
         let webViewConfigurationProvider = DefaultWebViewConfigurationProvider()
+        let externalURLOpener = SystemExternalURLOpener()
         _coordinator = StateObject(
             wrappedValue: AppCoordinator(
                 analyticsService: analyticsService,
                 routeProvider: routeProvider,
+                routingDelayNanoseconds: routingDelayNanoseconds,
                 storageService: storageService,
                 webViewURL: webViewURL,
-                webViewConfigurationProvider: webViewConfigurationProvider
+                webViewConfigurationProvider: webViewConfigurationProvider,
+                externalURLOpener: externalURLOpener
             )
         )
     }

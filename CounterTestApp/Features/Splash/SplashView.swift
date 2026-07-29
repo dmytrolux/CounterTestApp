@@ -8,9 +8,25 @@ struct SplashView: View {
     }
 
     var body: some View {
+        Group {
+            if viewModel.isVisible {
+                splashContent
+                    .transition(.identity)
+            }
+        }
+        .animation(nil, value: viewModel.isVisible)
+        .task {
+            await viewModel.load()
+        }
+    }
+
+    private var splashContent: some View {
         ZStack {
+            Color.indigo
+                .ignoresSafeArea()
+
             LinearGradient(
-                colors: [Color.indigo, Color.purple.opacity(0.8)],
+                colors: [Color.indigo, Color.purple],
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )
@@ -30,20 +46,26 @@ struct SplashView: View {
             }
             .padding(32)
         }
-        .task {
-            await viewModel.load()
-        }
     }
 
     @ViewBuilder
     private var content: some View {
         switch viewModel.state {
         case .loading:
-            ProgressView("Loading…")
-                .progressViewStyle(.circular)
-                .tint(.white)
-                .foregroundColor(.white)
-                .accessibilityIdentifier("splash.loader")
+            VStack(spacing: 12) {
+                ProgressView(value: viewModel.progress, total: 1)
+                    .progressViewStyle(.linear)
+                    .tint(.white)
+                    .frame(maxWidth: 220)
+
+                Text("\(viewModel.loadingMessage) \(Int(viewModel.progress * 100))%")
+                    .font(.subheadline.monospacedDigit())
+                    .foregroundColor(.white)
+            }
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel(viewModel.loadingMessage)
+            .accessibilityValue("\(Int(viewModel.progress * 100)) percent")
+            .accessibilityIdentifier("splash.loader")
 
         case let .failed(message):
             VStack(spacing: 16) {

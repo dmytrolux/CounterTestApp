@@ -9,9 +9,15 @@ simulates an asynchronous configuration request and alternates the resulting
 `LaunchDestination` on every successful cold launch. The last destination is
 persisted through `StorageService` under a dedicated routing key.
 
-During resolution, `SplashView` displays a branded loading screen. Once the
-mock configuration is received, `SplashViewModel` passes the destination to
-`AppCoordinator`, which switches to the selected flow.
+`AppCoordinatorView` contains only the `.counter` and `.webView` destinations.
+A single `SplashView` is always layered above the selected destination while
+the launch pipeline is running. During the mock configuration delay its
+progress advances from 0% to 35%.
+
+For `.counter`, progress completes and the splash is removed immediately after
+route resolution. For `.webView`, the live WebView is created underneath the
+splash and its KVO `estimatedProgress` is mapped from 35% to 100%. The splash
+then remains visible until `WKNavigationDelegate.didFinish` plus one second.
 
 With clean storage, the first launch opens `.counter`; subsequent launches open
 `.webView`, `.counter`, `.webView`, and so on. Clearing the app's data resets
@@ -40,5 +46,15 @@ custom application component in the user agent. It uses
 between WebView and app launches. The initial URL is
 `https://lk.nsq.market/en/tools/testing`.
 
-Navigation delegates, external URL handling, downloads, permissions, progress
-and offline UI intentionally belong to the subsequent development steps.
+`estimatedProgress` is observed through KVO by the shared launch splash while
+the live WebView loads underneath. The splash is dismissed one second after
+`WKNavigationDelegate.webView(_:didFinish:)`, rather than immediately at 100%,
+so cold WebKit process startup and final rendering are hidden from the user.
+
+The navigation delegate transparently allows redirects, reports navigation
+lifecycle analytics and keeps ordinary navigation inside the WebView. Explicit
+links to another HTTP(S) host open in the system browser. Custom schemes such
+as `tel:`, `mailto:` and `tg:` are passed to `UIApplication`.
+
+Downloads, camera permissions, popup creation, offline UI and navigation
+controls intentionally belong to the subsequent development steps.

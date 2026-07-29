@@ -8,10 +8,7 @@ struct WebViewScreen: View {
     }
 
     var body: some View {
-        WebViewContainer(
-            request: viewModel.request,
-            configurationProvider: viewModel.configurationProvider
-        )
-        .ignoresSafeArea(edges: .bottom)
+        WebViewContainer(viewModel: viewModel)
+            .ignoresSafeArea(edges: .bottom)
     }
 }
